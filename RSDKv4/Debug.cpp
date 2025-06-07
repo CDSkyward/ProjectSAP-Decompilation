@@ -563,10 +563,10 @@ void SetTextMenu(int sm)
     SetupTextMenu(&gameMenu[1], 0);
     switch (sm) {
         case DEVMENU_MAIN: {
-            AddTextMenuEntry(&gameMenu[0], "SONIC:");
+            AddTextMenuEntry(&gameMenu[0], "PROJECT SAP");
             AddTextMenuEntry(&gameMenu[0], "");
-            AddTextMenuEntry(&gameMenu[0], "WOOD ZONE PLUS");
             AddTextMenuEntry(&gameMenu[0], "DEV MENU");
+            AddTextMenuEntry(&gameMenu[0], "");
             //char version[0x80];
             //StrCopy(version, "RSDK");
             //StrAdd(version, Engine.gameVersion);
