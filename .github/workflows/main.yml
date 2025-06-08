@@ -68,14 +68,14 @@ jobs:
          Expand-Archive -Path libtheora.zip -DestinationPath ./dependencies/all
          Rename-Item ./dependencies/all/libtheora-1.1.1 libtheora
       - name: Restore vcpkg cache
-        id: vcpkg-cache
+        id: vcpkg-cache-x86
         uses: TAServers/vcpkg-cache@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: CMake Configure
         env:
           VCPKG_FEATURE_FLAGS: "binarycaching" # Possibly redundant, but explicitly sets the binary caching feature flag
-          VCPKG_BINARY_SOURCES: "clear;files,${{ steps.vcpkg-cache.outputs.path }},readwrite"
+          VCPKG_BINARY_SOURCES: "clear;files,${{ steps.vcpkg-cache-x86.outputs.path }},readwrite"
         run: |
           vcpkg install libogg:x64-windows-static-md libvorbis:x64-windows-static-md libtheora
           vcpkg integrate install
