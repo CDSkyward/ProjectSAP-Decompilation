@@ -19,6 +19,9 @@ on:
           - Both
           - CMake
           - Make
+      move-mod-repo:
+        type: boolean
+        required: false
 permissions:
   actions: read
   contents: read
@@ -191,7 +194,7 @@ jobs:
         with:
           name: SAP Ubuntu (Make)
           path: bin
-  sap-ubuntu-cmake:
+  sap_ubuntu-cmake:
     if: ${{ (github.event.inputs.platform == 'Linux' || github.event.inputs.platform == 'All') && (github.event.inputs.ubuntu-build-plat == 'CMake' || github.event.inputs.ubuntu-build-plat == 'Both') }}
     runs-on: ubuntu-latest
     steps:
@@ -220,3 +223,24 @@ jobs:
         with:
           name: SAP Ubuntu (CMake)
           path: linux.tar.gz
+  move-to-mod-repo:
+     if: ${{ github.event.inputs.move-mod-repo }}
+     needs: ['sap-windows', 'sap-windows-x64', 'sap_ubuntu-make', 'sap_ubuntu-cmake']
+     runs-on: windows-latest
+     steps:
+       - name: Download Artifacts
+         uses: actions/download-artifact@v4.3.0
+         with:
+           path: ./builds
+           merge-multiple: true
+       - name: Push Builds to Mod Repo
+         uses: GuillaumeFalourd/copy-push-files@v1
+         with:
+             email: ${{ github.actor }}@users.noreply.github.com
+             name: ${{ github.actor }}
+             commit_message: Move SAP Builds
+             target_branch: master
+             source_files: ./builds/*
+             remote_repository: https://github.com/megadeglitcher/ProjectSAP
+             access_token: ${{ secrets.ACCESS_TOKEN }}
+             target_dir: ./builds
