@@ -2,16 +2,15 @@ name: Build Project SAP
 on:
   workflow_dispatch:
     inputs:
-      platform:
-        required: true
-        default: 'All'
-        description: Platform
-        type: choice
-        options:
-          - All
-          - Linux
-          - Windows (x64)
-          - Windows (x86)
+      windows-x86:
+        type: boolean
+        description: Windows (x86)
+      linux: 
+        type: boolean
+        description: Linux
+      windows-x64:
+        type: boolean
+        description: Windows (x64)
       ubuntu-build-plat:
         type: choice
         description: Linux Build Platform
@@ -28,7 +27,7 @@ env:
   
 jobs:
   sap-windows:
-    if: ${{ github.event.inputs.platform == 'Windows (x86)' || github.event.inputs.platform == 'All' }}  
+    if: ${{ github.event.inputs.windows-x86 == 'true' }}  
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -100,7 +99,7 @@ jobs:
           name: sap-windows
           path: artifacts
   sap-windows-x64:
-    if: ${{ github.event.inputs.platform == 'Windows (x64)' || github.event.inputs.platform == 'All' }}
+    if: ${{ github.event.inputs.windows-x64 == 'true' }}
     runs-on: windows-2022
     steps:
       - name: Checkout
@@ -172,7 +171,7 @@ jobs:
           name: sap-windows-x64
           path: artifacts
   sap_ubuntu-make:
-      if: ${{ (github.event.inputs.platform == 'Linux' || github.event.inputs.platform == 'All') && (github.event.inputs.ubuntu-build-plat == 'Make' || github.event.inputs.ubuntu-build-plat == 'Both') }}
+      if: ${{ (github.event.inputs.linux == true) && (github.event.inputs.ubuntu-build-plat == 'Make' || github.event.inputs.ubuntu-build-plat == 'Both') }}
       runs-on: ubuntu-latest
       steps:
       - name: Checkout repository
@@ -192,7 +191,7 @@ jobs:
           name: SAP Ubuntu (Make)
           path: bin
   sap-ubuntu-cmake:
-    if: ${{ (github.event.inputs.platform == 'Linux' || github.event.inputs.platform == 'All') && (github.event.inputs.ubuntu-build-plat == 'CMake' || github.event.inputs.ubuntu-build-plat == 'Both') }}
+    if: ${{ (github.event.inputs.linux == true) && (github.event.inputs.ubuntu-build-plat == 'CMake' || github.event.inputs.ubuntu-build-plat == 'Both') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
