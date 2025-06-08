@@ -12,6 +12,13 @@ on:
           - Linux
           - Windows (x64)
           - Windows (x86)
+      ubuntu-cmake-make:
+        type: choice
+        description: Linux Build Platform
+        options:
+          - Both
+          - CMake
+          - Make
 permissions:
   actions: read
   contents: read
@@ -165,7 +172,7 @@ jobs:
           name: sap-windows-x64
           path: artifacts
   sap_ubuntu-make:
-      if: ${{ github.event.inputs.platform == 'Linux' || github.event.inputs.platform == 'All' }}
+      if: ${{ github.event.inputs.platform == 'Linux' || github.event.inputs.platform == 'All' || github.event.inputs.ubuntu-cmake-make == 'Make' || github.event.inputs.ubuntu-cmake-make == 'Both' }}
       runs-on: ubuntu-latest
       steps:
       - name: Checkout repository
@@ -185,7 +192,7 @@ jobs:
           name: SAP Ubuntu (Make)
           path: bin
   sap-ubuntu-cmake:
-    if: ${{ github.event.inputs.platform == 'Linux' || github.event.inputs.platform == 'All' }}
+    if: ${{ github.event.inputs.platform == 'Linux' || github.event.inputs.platform == 'All' || github.event.inputs.ubuntu-cmake-make == 'CMake' || github.event.inputs.ubuntu-cmake-make == 'Both' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
