@@ -77,7 +77,7 @@ jobs:
           VCPKG_FEATURE_FLAGS: "binarycaching" # Possibly redundant, but explicitly sets the binary caching feature flag
           VCPKG_BINARY_SOURCES: "clear;files,${{ steps.vcpkg-cache-x86.outputs.path }},readwrite"
         run: |
-          vcpkg install libogg:x64-windows-static-md libvorbis:x64-windows-static-md libtheora
+          vcpkg install libogg:x86-windows-static-md libvorbis:x86-windows-static libtheora:x86-windows-static 
           vcpkg integrate install
       - name: Build SAP
         run: |
