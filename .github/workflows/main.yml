@@ -12,6 +12,10 @@ on:
           - Linux
           - Windows (x64)
           - Windows (x86)
+env:
+  GENERAL_FLAGS: "-DCMAKE_BUILD_TYPE=Release"
+  GENERAL_LINUX_FLAGS: "-DCMAKE_CXX_FLAGS='-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0'"
+  
 jobs:
   sap-windows:
     if: ${{ github.event.inputs.platform == 'Windows (x86)' || github.event.inputs.platform == 'All' }}  
@@ -31,8 +35,10 @@ jobs:
         with:
           path: ./dependencies/windows
           key: ${{ runner.os }}
-      - name: Download libogg and libvorbis for easier includes
-        if: steps.cache.outputs.cache-hit != 'true'
+          restore-keys: |
+            ${{ runner.os }}
+      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+        name: Download libogg and libvorbis for easier includes
         run: |
           Invoke-WebRequest -Uri "https://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-1.3.5.zip" -OutFile "libogg.zip"
           Expand-Archive -Path libogg.zip -DestinationPath ./dependencies/windows/
@@ -90,8 +96,10 @@ jobs:
         with:
           path: ./dependencies/windows
           key: ${{ runner.os }}
-      - name: Download libogg and libvorbis for easier includes
-        if: steps.cache.outputs.cache-hit != 'true'
+          restore-keys: |
+            ${{ runner.os }}
+      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}    
+        name: Download libogg and libvorbis for easier includes
         run: |
           Invoke-WebRequest -Uri "https://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-1.3.5.zip" -OutFile "libogg.zip"
           Expand-Archive -Path libogg.zip -DestinationPath ./dependencies/windows/
@@ -131,7 +139,7 @@ jobs:
         with:
           name: sap-windows-x64
           path: artifacts
-  SAP_Ubuntu-Make:
+  sap_ubuntu-make:
       if: ${{ github.event.inputs.platform == 'Linux' || github.event.inputs.platform == 'All' }}
       runs-on: ubuntu-latest
       steps:
@@ -151,7 +159,7 @@ jobs:
         with:
           name: SAP Ubuntu (Make)
           path: bin
-  SAP_Ubuntu-CMake:
+  sap-ubuntu-cmake:
     if: ${{ github.event.inputs.platform == 'Linux' || github.event.inputs.platform == 'All' }}
     runs-on: ubuntu-latest
     steps:
