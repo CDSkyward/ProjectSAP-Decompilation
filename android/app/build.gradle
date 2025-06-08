@@ -19,18 +19,23 @@ android {
         versionCode 1
         versionName "1.0"
         externalNativeBuild {
-            cmake {
-                arguments "-DANDROID_APP_PLATFORM=android-16", "-DPLATFORM=Android", "-DANDROID_STL=c++_static"
-                abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
-                abiFilters 'arm64-v8a'
+            ndkBuild {
+                arguments "APP_PLATFORM=android-23"
+                abiFilters = []
+                abiFilters.addAll(ABIFILTERS.split(';').collect{it as String})
             }
+            //cmake {
+            //    arguments "-DANDROID_APP_PLATFORM=android-16", "-DANDROID_STL=c++_static"
+            //    // abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            //    abiFilters 'arm64-v8a'
+            //}
         }
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
+			signingConfig signingConfigs.debug
         }
     }
     if (!project.hasProperty('EXCLUDE_NATIVE_LIBS')) {
@@ -38,9 +43,12 @@ android {
             jniLibs.srcDir 'libs'
         }
         externalNativeBuild {
-            cmake {
-                path 'jni/CMakeLists.txt'
+            ndkBuild {
+                path 'jni/Android.mk'
             }
+            //cmake {
+            //    path 'jni/CMakeLists.txt'
+            //}
         }
        
     }
