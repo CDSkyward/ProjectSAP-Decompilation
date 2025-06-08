@@ -12,6 +12,9 @@ on:
           - Linux
           - Windows (x64)
           - Windows (x86)
+permissions:
+  actions: read
+  contents: read
 env:
   GENERAL_FLAGS: "-DCMAKE_BUILD_TYPE=Release"
   GENERAL_LINUX_FLAGS: "-DCMAKE_CXX_FLAGS='-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0'"
@@ -64,9 +67,17 @@ jobs:
          Invoke-WebRequest -Uri "https://ftp.osuosl.org/pub/xiph/releases/theora/libtheora-1.1.1.zip" -OutFile "libtheora.zip"
          Expand-Archive -Path libtheora.zip -DestinationPath ./dependencies/all
          Rename-Item ./dependencies/all/libtheora-1.1.1 libtheora
-      - name: Run vcpkg
+      - name: Restore vcpkg cache
+        id: vcpkg-cache
+        uses: TAServers/vcpkg-cache@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: CMake Configure
+        env:
+          VCPKG_FEATURE_FLAGS: "binarycaching" # Possibly redundant, but explicitly sets the binary caching feature flag
+          VCPKG_BINARY_SOURCES: "clear;files,${{ steps.vcpkg-cache.outputs.path }},readwrite"
         run: |
-          vcpkg install libogg:x86-windows-static-md libvorbis:x86-windows-static libtheora:x86-windows-static 
+          vcpkg install libogg:x64-windows-static-md libvorbis:x64-windows-static-md libtheora
           vcpkg integrate install
       - name: Build SAP
         run: |
@@ -128,7 +139,15 @@ jobs:
          Invoke-WebRequest -Uri "https://ftp.osuosl.org/pub/xiph/releases/theora/libtheora-1.1.1.zip" -OutFile "libtheora.zip"
          Expand-Archive -Path libtheora.zip -DestinationPath ./dependencies/all
          Rename-Item ./dependencies/all/libtheora-1.1.1 libtheora
-      - name: Run vcpkg
+      - name: Restore vcpkg cache
+        id: vcpkg-cache-x64
+        uses: TAServers/vcpkg-cache@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: CMake Configure
+        env:
+          VCPKG_FEATURE_FLAGS: "binarycaching" # Possibly redundant, but explicitly sets the binary caching feature flag
+          VCPKG_BINARY_SOURCES: "clear;files,${{ steps.vcpkg-cache-x64.outputs.path }},readwrite"
         run: |
           vcpkg install libogg:x64-windows-static-md libvorbis:x64-windows-static-md libtheora
           vcpkg integrate install
