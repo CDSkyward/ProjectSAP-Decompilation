@@ -12,7 +12,7 @@ on:
           - Linux
           - Windows (x64)
           - Windows (x86)
-      ubuntu-cmake-make:
+      ubuntu-build-plat:
         type: choice
         description: Linux Build Platform
         options:
@@ -172,7 +172,7 @@ jobs:
           name: sap-windows-x64
           path: artifacts
   sap_ubuntu-make:
-      if: ${{ github.event.inputs.platform == 'Linux' || github.event.inputs.platform == 'All' || github.event.inputs.ubuntu-cmake-make == 'Make' || github.event.inputs.ubuntu-cmake-make == 'Both' }}
+      if: ${{ github.event.inputs.platform == 'Linux' || github.event.inputs.platform == 'All' && github.event.inputs.ubuntu-build-plat == 'Make' || github.event.inputs.ubuntu-build-plat == 'Both' }}
       runs-on: ubuntu-latest
       steps:
       - name: Checkout repository
@@ -192,7 +192,7 @@ jobs:
           name: SAP Ubuntu (Make)
           path: bin
   sap-ubuntu-cmake:
-    if: ${{ github.event.inputs.platform == 'Linux' || github.event.inputs.platform == 'All' || github.event.inputs.ubuntu-cmake-make == 'CMake' || github.event.inputs.ubuntu-cmake-make == 'Both' }}
+    if: ${{ github.event.inputs.platform == 'Linux' || github.event.inputs.platform == 'All' && github.event.inputs.ubuntu-build-plat == 'CMake' || github.event.inputs.ubuntu-build-plat == 'Both' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
