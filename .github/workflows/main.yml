@@ -192,7 +192,7 @@ jobs:
           name: SAP Ubuntu (Make)
           path: bin
   sap-ubuntu-cmake:
-    if: ${{ (github.event.inputs.platform == 'Linux' || github.event.inputs.platform == 'All') && (github.event.inputs.ubuntu-build-plat == 'Make' || github.event.inputs.ubuntu-build-plat == 'Both') }}
+    if: ${{ (github.event.inputs.platform == 'Linux' || github.event.inputs.platform == 'All') && (github.event.inputs.ubuntu-build-plat == 'CMake' || github.event.inputs.ubuntu-build-plat == 'Both') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
