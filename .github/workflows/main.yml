@@ -278,13 +278,20 @@ jobs:
       - name: Move & Copy stuff
         run: |
           Copy-Item -Path ./dependencies/android\* -Destination ./dependencies/
-          Copy-Item -Path .dependencies/android/libogg/ -Destination ./dependencies/android/ -recurse
+          Copy-Item -Path ./dependencies/android/libogg/ -Destination ./dependencies/android/ -recurse
           Copy-Item -Path ./dependencies/android/config_types.h -Destination ./dependencies/android/libogg/include/ogg/
       - name: Set up Java
         uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
           java-version: 11
+      - name: Cache NDK
+        uses: actions/cache@v4
+        with:
+          path: C:\Users\runneradmin\AppData\Local\Android\Sdk\ndk\22.1.7171670
+          key: ${{ runner.os }}-NDK
+          restore-keys: |
+            ${{ runner.os }}-NDK
       - name: Build SAP Android
         working-directory: ./android
         run: |
