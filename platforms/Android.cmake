@@ -1,4 +1,4 @@
-add_library(RetroEngine SHARED ${RETRO_FILES})
+add_library(main SHARED ${RETRO_FILES})
 
 set(DEP_PATH android)
 set(RETRO_SDL_VERSION 2)
@@ -24,4 +24,4 @@ target_link_libraries(RetroEngine
     SDL2
 )
 
-target_link_options(RetroEngine PRIVATE -u GameActivity_onCreate)
+target_link_options(main PRIVATE -u GameActivity_onCreate)
