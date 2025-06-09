@@ -173,7 +173,7 @@ jobs:
         with:
           name: sap-windows-x64
           path: artifacts
-  sap_ubuntu-make:
+  sap-ubuntu-make:
       if: ${{ (github.event.inputs.linux == 'true') && (github.event.inputs.ubuntu-build-plat == 'Make' || github.event.inputs.ubuntu-build-plat == 'Both') }}
       runs-on: ubuntu-latest
       steps:
@@ -238,7 +238,7 @@ jobs:
         env:
           cache-name: cache-android-dependencies
         with:
-          path: ./dependencies/windows
+          path: ./dependencies/android
           key: ${{ runner.os }}-Android
           restore-keys: |
             ${{ runner.os }}-Android
@@ -277,8 +277,8 @@ jobs:
           Rename-Item ./android/app/jni/SDL2-2.0.16 SDL
       - name: Move & Copy stuff
         run: |
-          Copy-Item -Path ./dependencies/android/app/jni/src/dependencies/android\* -Destination ./dependencies/
-          Copy-Item -Path ./dependencies/android/app/jni/src/dependencies/android/libogg/ -Destination ./dependencies/android/ -recurse
+          Copy-Item -Path ./dependencies/android\* -Destination ./dependencies/
+          Copy-Item -Path .dependencies/android/libogg/ -Destination ./dependencies/android/ -recurse
           Copy-Item -Path ./dependencies/android/config_types.h -Destination ./dependencies/android/libogg/include/ogg/
       - name: Set up Java
         uses: actions/setup-java@v2
