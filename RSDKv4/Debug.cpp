@@ -18,7 +18,6 @@ void InitDevMenu()
     ReleaseStageSfx();
     fadeMode        = 0;
     playerListPos   = 0;
-    player2ListPos  = -1;
     Engine.gameMode = ENGINE_DEVMENU;
     ClearGraphicsData();
     ClearAnimationData();
@@ -235,32 +234,20 @@ void ProcessStageSelect()
             else if (inputPress.B) {
                 SetTextMenu(DEVMENU_MAIN);
             }
-            else if (inputPress.C) {
-                player2ListPos = gameMenu[1].selection1;
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], "PLAYER 2 SELECTED.");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-                AddTextMenuEntry(&gameMenu[0], " ");
-            }
+			else if (inputPress.C) {
+				if (GetGlobalVariableByName("stage.player2ListPos") == -1) {
+					SetGlobalVariableByName("stage.player2ListPos", gameMenu[1].selection1);
+					AddTextMenuEntry(&gameMenu[0], "PLAYER 2 SELECTED");
+					
+				} else if (GetGlobalVariableByName("stage.player3ListPos") == -1) {
+					SetGlobalVariableByName("stage.player3ListPos", gameMenu[1].selection1);
+					SetTextMenuEntry(&gameMenu[0], "PLAYER 3 SELECTED", 1);
+					
+				} else if (GetGlobalVariableByName("stage.player4ListPos") == -1) {
+					SetGlobalVariableByName("stage.player4ListPos", gameMenu[1].selection1);
+					SetTextMenuEntry(&gameMenu[0], "PLAYER 4 SELECTED", 1);
+				}
+			}
             break;
         }
         case DEVMENU_PLAYER2SEL: // Selecting Player 2

@@ -368,7 +368,6 @@ const char variableNames[][0x20] = {
     "object.inkred",
     "object.inkgreen",
     "object.inkblue",
-    "stage.player2ListPos",
     "menu3.selection",
     "current.unix",
     "local.unix",
@@ -1009,7 +1008,6 @@ enum ScrVar {
     VAR_OBJECTINKRED,
     VAR_OBJECTINKGREEN,
     VAR_OBJECTINKBLUE,
-    VAR_STAGEPLAYER2LISTPOS,
     VAR_MENU3SELECTION,
     VAR_CURRENTUNIX,
     VAR_CURRENTLOCALUNIX,
@@ -4165,7 +4163,6 @@ void ProcessScript(int scriptCodePtr, int jumpTablePtr, byte scriptEvent)
                         scriptEng.operands[i] = objectEntityList[arrayVal].inkblue;
                         break;
                     }
-                    case VAR_STAGEPLAYER2LISTPOS: scriptEng.operands[i] = player2ListPos; break;
                     case VAR_CURRENTUNIX: { 
 						time_t currentTime = time(NULL);
                         scriptEng.operands[i] = (int)currentTime;
@@ -6270,7 +6267,6 @@ void ProcessScript(int scriptCodePtr, int jumpTablePtr, byte scriptEvent)
                         objectEntityList[arrayVal].inkblue = scriptEng.operands[i];
                         break;
                     }
-                    case VAR_STAGEPLAYER2LISTPOS: player2ListPos = scriptEng.operands[i]; break;
                     case VAR_CURRENTUNIX: { 
 						time_t currentTime = time(NULL);
                         scriptEng.operands[i] = (int)currentTime;
