@@ -2,21 +2,21 @@ name: Build Project SAP
 on:
   workflow_dispatch:
     inputs:
-      windows-x86:
-        type: boolean
-        description: Windows (x86)
       linux: 
         type: boolean
         description: Linux
       windows-x64:
         type: boolean
         description: Windows (x64)
+      windows-x86:
+        type: boolean
+        description: Windows (x86)
       android:
         type: boolean
         description: Android
       ubuntu-build-plat:
         type: choice
-        description: Linux Build Platform
+        description: Linux Build Method
         options:
           - Both
           - CMake
