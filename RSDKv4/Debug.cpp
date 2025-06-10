@@ -161,12 +161,17 @@ void ProcessStageSelect()
                 else if (gameMenu[0].selection2 == 11) {
                     SetupTextMenu(&gameMenu[0], 0);
                     AddTextMenuEntry(&gameMenu[0], "SELECT A PLAYER");
+                    AddTextMenuEntry(&gameMenu[0], "");
                     SetupTextMenu(&gameMenu[1], 0);
                     LoadConfigListText(&gameMenu[1], 0);
                     gameMenu[1].alignment      = 0;
                     gameMenu[1].selectionCount = 1;
                     gameMenu[1].selection1     = 0;
                     stageMode                  = DEVMENU_PLAYERSEL;
+					
+					SetGlobalVariableByName("stage.player2ListPos", -1);
+					SetGlobalVariableByName("stage.player3ListPos", -1);
+					SetGlobalVariableByName("stage.player4ListPos", -1);
                 }
                 else if (gameMenu[0].selection2 == 13) {
                     ClearNativeObjects();
@@ -235,17 +240,20 @@ void ProcessStageSelect()
                 SetTextMenu(DEVMENU_MAIN);
             }
 			else if (inputPress.C) {
+				char buffer[0x100];
 				if (GetGlobalVariableByName("stage.player2ListPos") == -1) {
 					SetGlobalVariableByName("stage.player2ListPos", gameMenu[1].selection1);
-					AddTextMenuEntry(&gameMenu[0], "PLAYER 2 SELECTED");
+					sprintf(buffer, "PLAYER 2 SET TO ID: %d", gameMenu[1].selection1);
+					SetTextMenuEntry(&gameMenu[0], buffer, 1);
 					
 				} else if (GetGlobalVariableByName("stage.player3ListPos") == -1) {
 					SetGlobalVariableByName("stage.player3ListPos", gameMenu[1].selection1);
-					SetTextMenuEntry(&gameMenu[0], "PLAYER 3 SELECTED", 1);
+					sprintf(buffer, "PLAYER 3 SET TO ID: %d", gameMenu[1].selection1);
+					SetTextMenuEntry(&gameMenu[0], buffer, 1);
 					
 				} else if (GetGlobalVariableByName("stage.player4ListPos") == -1) {
-					SetGlobalVariableByName("stage.player4ListPos", gameMenu[1].selection1);
-					SetTextMenuEntry(&gameMenu[0], "PLAYER 4 SELECTED", 1);
+					sprintf(buffer, "PLAYER 4 SET TO ID: %d", gameMenu[1].selection1);
+					SetTextMenuEntry(&gameMenu[0], buffer, 1);
 				}
 			}
             break;
@@ -341,6 +349,7 @@ void ProcessStageSelect()
             else if (inputPress.B) {
                 SetupTextMenu(&gameMenu[0], 0);
                 AddTextMenuEntry(&gameMenu[0], "SELECT A PLAYER");
+                AddTextMenuEntry(&gameMenu[0], "");
                 SetupTextMenu(&gameMenu[1], 0);
                 LoadConfigListText(&gameMenu[1], 0);
                 gameMenu[0].alignment        = 2;
@@ -350,6 +359,10 @@ void ProcessStageSelect()
                 gameMenu[1].visibleRowOffset = 0;
                 gameMenu[1].selection1       = playerListPos;
                 stageMode                    = DEVMENU_PLAYERSEL;
+                
+				SetGlobalVariableByName("stage.player2ListPos", -1);
+				SetGlobalVariableByName("stage.player3ListPos", -1);
+				SetGlobalVariableByName("stage.player4ListPos", -1);
             }
             break;
         }
