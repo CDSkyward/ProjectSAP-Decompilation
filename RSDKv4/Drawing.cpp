@@ -3694,10 +3694,14 @@ void DrawSpriteAllEffect(void *ent, int direction, int XPos, int YPos, int pivot
 
 #if RETRO_SOFTWARE_RENDER
 	//check flags
+    int hscale = scale;
+	int vscale = scale;
 	if ((flags & FX_INK) == 0)
 		ink = INK_NONE;
-	if ((flags & FX_SCALE) == 0)
-		scale = 0x200;
+	if ((flags & FX_HSCALE) == 0)
+		hscale = 0x200;
+	if ((flags & FX_VSCALE) == 0)
+		vscale = 0x200;
 	if ((flags & FX_ROTATE) == 0)
 		rotation = 0;
 	if ((flags & 3) == 0)
@@ -3721,62 +3725,67 @@ void DrawSpriteAllEffect(void *ent, int direction, int XPos, int YPos, int pivot
         angle += 0x200;
     if (angle)
         angle = 0x200 - angle;
-    int sine   = scale * sin512LookupTable[angle] >> 9;
-    int cosine = scale * cos512LookupTable[angle] >> 9;
+    int sine   = hscale * sin512LookupTable[angle] >> 9;
+    int cosine = hscale * cos512LookupTable[angle] >> 9;
+    int vsine   = vscale * sin512LookupTable[angle] >> 9;
+    int vcosine = vscale * cos512LookupTable[angle] >> 9;
     int xPositions[4];
     int yPositions[4];
 
     if (direction == FLIP_X) {
-        xPositions[0] = XPos + ((sine * (-pivotY - 2) + cosine * (pivotX + 2)) >> 9);
-        yPositions[0] = YPos + ((cosine * (-pivotY - 2) - sine * (pivotX + 2)) >> 9);
-        xPositions[1] = XPos + ((sine * (-pivotY - 2) + cosine * (pivotX - width - 2)) >> 9);
-        yPositions[1] = YPos + ((cosine * (-pivotY - 2) - sine * (pivotX - width - 2)) >> 9);
-        xPositions[2] = XPos + ((sine * (height - pivotY + 2) + cosine * (pivotX + 2)) >> 9);
-        yPositions[2] = YPos + ((cosine * (height - pivotY + 2) - sine * (pivotX + 2)) >> 9);
+        xPositions[0] = XPos + ((vsine * (-pivotY - 2) + cosine * (pivotX + 2)) >> 9);
+        yPositions[0] = YPos + ((vcosine * (-pivotY - 2) - sine * (pivotX + 2)) >> 9);
+        xPositions[1] = XPos + ((vsine * (-pivotY - 2) + cosine * (pivotX - width - 2)) >> 9);
+        yPositions[1] = YPos + ((vcosine * (-pivotY - 2) - sine * (pivotX - width - 2)) >> 9);
+        xPositions[2] = XPos + ((vsine * (height - pivotY + 2) + cosine * (pivotX + 2)) >> 9);
+        yPositions[2] = YPos + ((vcosine * (height - pivotY + 2) - sine * (pivotX + 2)) >> 9);
         int a         = pivotX - width - 2;
         int b         = height - pivotY + 2;
-        xPositions[3] = XPos + ((sine * b + cosine * a) >> 9);
-        yPositions[3] = YPos + ((cosine * b - sine * a) >> 9);
+        xPositions[3] = XPos + ((vsine * b + cosine * a) >> 9);
+        yPositions[3] = YPos + ((vcosine * b - sine * a) >> 9);
     }
 	else if (direction == FLIP_Y) {
-        xPositions[0] = XPos + ((sine * (pivotY + 2) + cosine * (-pivotX - 2)) >> 9);
-        yPositions[0] = YPos + ((cosine * (pivotY + 2) - sine * (-pivotX - 2)) >> 9);
-        xPositions[1] = XPos + ((sine * (pivotY + 2) + cosine * (width - pivotX + 2)) >> 9);
-        yPositions[1] = YPos + ((cosine * (pivotY + 2) - sine * (width - pivotX + 2)) >> 9);
-        xPositions[2] = XPos + ((sine * (pivotY - height - 2) + cosine * (-pivotX - 2)) >> 9);
-        yPositions[2] = YPos + ((cosine * (pivotY - height - 2) - sine * (-pivotX - 2)) >> 9);
+       xPositions[0] = XPos + ((vsine * (pivotY + 2) + cosine * (-pivotX - 2)) >> 9);
+        yPositions[0] = YPos + ((vcosine * (pivotY + 2) - sine * (-pivotX - 2)) >> 9);
+        xPositions[1] = XPos + ((vsine * (pivotY + 2) + cosine * (width - pivotX + 2)) >> 9);
+        yPositions[1] = YPos + ((vcosine * (pivotY + 2) - sine * (width - pivotX + 2)) >> 9);
+        xPositions[2] = XPos + ((vsine * (pivotY - height - 2) + cosine * (-pivotX - 2)) >> 9);
+        yPositions[2] = YPos + ((vcosine * (pivotY - height - 2) - sine * (-pivotX - 2)) >> 9);
         int a         = width - pivotX + 2;
         int b         = pivotY - height - 2;
-        xPositions[3] = XPos + ((sine * b + cosine * a) >> 9);
-        yPositions[3] = YPos + ((cosine * b - sine * a) >> 9);
+        xPositions[3] = XPos + ((vsine * b + cosine * a) >> 9);
+        yPositions[3] = YPos + ((vcosine * b - sine * a) >> 9);
     }
 	else if (direction == FLIP_XY) {
-        xPositions[0] = XPos + ((sine * (pivotY + 2) + cosine * (pivotX + 2)) >> 9);
-        yPositions[0] = YPos + ((cosine * (pivotY + 2) - sine * (pivotX + 2)) >> 9);
-        xPositions[1] = XPos + ((sine * (pivotY + 2) + cosine * (pivotX - width - 2)) >> 9);
-        yPositions[1] = YPos + ((cosine * (pivotY + 2) - sine * (pivotX - width - 2)) >> 9);
-        xPositions[2] = XPos + ((sine * (pivotY - height - 2) + cosine * (pivotX + 2)) >> 9);
-        yPositions[2] = YPos + ((cosine * (pivotY - height - 2) - sine * (pivotX + 2)) >> 9);
+        xPositions[0] = XPos + ((vsine * (pivotY + 2) + cosine * (pivotX + 2)) >> 9);
+        yPositions[0] = YPos + ((vcosine * (pivotY + 2) - sine * (pivotX + 2)) >> 9);
+        xPositions[1] = XPos + ((vsine * (pivotY + 2) + cosine * (pivotX - width - 2)) >> 9);
+        yPositions[1] = YPos + ((vcosine * (pivotY + 2) - sine * (pivotX - width - 2)) >> 9);
+        xPositions[2] = XPos + ((vsine * (pivotY - height - 2) + cosine * (pivotX + 2)) >> 9);
+        yPositions[2] = YPos + ((vcosine * (pivotY - height - 2) - sine * (pivotX + 2)) >> 9);
         int a         = pivotX - width - 2;
         int b         = pivotY - height - 2;
-        xPositions[3] = XPos + ((sine * b + cosine * a) >> 9);
-        yPositions[3] = YPos + ((cosine * b - sine * a) >> 9);
+        xPositions[3] = XPos + ((vsine * b + cosine * a) >> 9);
+        yPositions[3] = YPos + ((vcosine * b - sine * a) >> 9);
     }
     else {
-        xPositions[0] = XPos + ((sine * (-pivotY - 2) + cosine * (-pivotX - 2)) >> 9);
-        yPositions[0] = YPos + ((cosine * (-pivotY - 2) - sine * (-pivotX - 2)) >> 9);
-        xPositions[1] = XPos + ((sine * (-pivotY - 2) + cosine * (width - pivotX + 2)) >> 9);
-        yPositions[1] = YPos + ((cosine * (-pivotY - 2) - sine * (width - pivotX + 2)) >> 9);
-        xPositions[2] = XPos + ((sine * (height - pivotY + 2) + cosine * (-pivotX - 2)) >> 9);
-        yPositions[2] = YPos + ((cosine * (height - pivotY + 2) - sine * (-pivotX - 2)) >> 9);
+        xPositions[0] = XPos + ((vsine * (-pivotY - 2) + cosine * (-pivotX - 2)) >> 9);
+        yPositions[0] = YPos + ((vcosine * (-pivotY - 2) - sine * (-pivotX - 2)) >> 9);
+        xPositions[1] = XPos + ((vsine * (-pivotY - 2) + cosine * (width - pivotX + 2)) >> 9);
+        yPositions[1] = YPos + ((vcosine * (-pivotY - 2) - sine * (width - pivotX + 2)) >> 9);
+        xPositions[2] = XPos + ((vsine * (height - pivotY + 2) + cosine * (-pivotX - 2)) >> 9);
+        yPositions[2] = YPos + ((vcosine * (height - pivotY + 2) - sine * (-pivotX - 2)) >> 9);
         int a         = width - pivotX + 2;
         int b         = height - pivotY + 2;
-        xPositions[3] = XPos + ((sine * b + cosine * a) >> 9);
-        yPositions[3] = YPos + ((cosine * b - sine * a) >> 9);
+        xPositions[3] = XPos + ((vsine * b + cosine * a) >> 9);
+        yPositions[3] = YPos + ((vcosine * b - sine * a) >> 9);
     }
-    int truescale = (signed int)(float)((float)(512.0 / (float)scale) * 512.0);
+    int truescale = (signed int)(float)((float)(512.0 / (float)hscale) * 512.0);
     sine          = truescale * sin512LookupTable[angle] >> 9;
     cosine        = truescale * cos512LookupTable[angle] >> 9;
+    truescale = (signed int)(float)((float)(512.0 / (float)vscale) * 512.0);
+    vsine          = truescale * sin512LookupTable[angle] >> 9;
+    vcosine        = truescale * cos512LookupTable[angle] >> 9;
 
     int left = GFX_LINESIZE;
     for (int i = 0; i < 4; ++i) {
@@ -3833,12 +3842,12 @@ void DrawSpriteAllEffect(void *ent, int direction, int XPos, int YPos, int pivot
     int shiftheight = (sprY << 9) - 1;
     fullheight <<= 9;
     byte *gfxData = &graphicData[surface->dataPosition];
-    if (cosine < 0 || sine < 0)
-        sprYPos += sine + cosine;
+    if (vcosine < 0 || vsine < 0)
+        sprYPos += vsine + vcosine;
 
     if (direction == FLIP_X) {
         int drawX = sprXPos - (cosine * startX - sine * startY) - (truescale >> 1);
-        int drawY = cosine * startY + sprYPos + sine * startX;
+        int drawY = vcosine * startY + sprYPos + vsine * startX;
         while (maxY--) {
             activePalette   = fullPalette[*lineBuffer];
             activePalette32 = fullPalette32[*lineBuffer];
@@ -3913,16 +3922,16 @@ void DrawSpriteAllEffect(void *ent, int direction, int XPos, int YPos, int pivot
                 }
                 ++frameBufferPtr;
                 finalX -= cosine;
-                finalY += sine;
+                finalY += vsine;
             }
             drawX += sine;
-            drawY += cosine;
+            drawY += vcosine;
             frameBufferPtr += pitch;
         }
     }
     else if (direction == FLIP_Y) {
         int drawX = sprXPos + cosine * startX - sine * startY;
-        int drawY = sprYPos - (cosine * startY + sine * startX);
+        int drawY = sprYPos - (vcosine * startY + vsine * startX);
         while (maxY--) {
             activePalette   = fullPalette[*lineBuffer];
             activePalette32 = fullPalette32[*lineBuffer];
@@ -3998,16 +4007,16 @@ void DrawSpriteAllEffect(void *ent, int direction, int XPos, int YPos, int pivot
                 }
                 ++frameBufferPtr;
                 finalX += cosine;
-                finalY -= sine;
+                finalY -= vsine;
             }
             drawX -= sine;
-            drawY -= cosine;
+            drawY -= vcosine;
             frameBufferPtr += pitch;
         }
     }
     else if (direction == FLIP_XY) {
         int drawX = sprXPos - (cosine * startX - sine * startY) - (truescale >> 1);
-        int drawY = sprYPos - (cosine * startY + sine * startX);
+        int drawY = sprYPos - (vcosine * startY + vsine * startX);
         while (maxY--) {
             activePalette   = fullPalette[*lineBuffer];
             activePalette32 = fullPalette32[*lineBuffer];
@@ -4083,16 +4092,16 @@ void DrawSpriteAllEffect(void *ent, int direction, int XPos, int YPos, int pivot
                 }
                 ++frameBufferPtr;
                 finalX -= cosine;
-                finalY -= sine;
+                finalY -= vsine;
             }
             drawX += sine;
-            drawY -= cosine;
+            drawY -= vcosine;
             frameBufferPtr += pitch;
         }
     }
     else {
         int drawX = sprXPos + cosine * startX - sine * startY;
-        int drawY = cosine * startY + sprYPos + sine * startX;
+        int drawY = vcosine * startY + sprYPos + vsine * startX;
         while (maxY--) {
             activePalette   = fullPalette[*lineBuffer];
             activePalette32 = fullPalette32[*lineBuffer];
@@ -4167,10 +4176,10 @@ void DrawSpriteAllEffect(void *ent, int direction, int XPos, int YPos, int pivot
                 }
                 ++frameBufferPtr;
                 finalX += cosine;
-                finalY += sine;
+                finalY += vsine;
             }
             drawX -= sine;
-            drawY += cosine;
+            drawY += vcosine;
             frameBufferPtr += pitch;
         }
     }
@@ -4424,21 +4433,21 @@ void DrawObjectAnimation(void *objScr, void *ent, int XPos, int YPos)
     switch (sprAnim->rotationStyle) {
         case ROTSTYLE_NONE:            
 		DrawSpriteAllEffect(entity, entity->direction, XPos, YPos, -frame->pivotX, -frame->pivotY, frame->sprX, frame->sprY, frame->width, frame->height,
-							 0, entity->scale, frame->sheetID, entity->alpha, entity->inkEffect, 13);
+						0, entity->scale, frame->sheetID, entity->alpha, entity->inkEffect, FX_ALL - FX_ROTATE);
             break;
 
         case ROTSTYLE_FULL:
 		DrawSpriteAllEffect(entity, entity->direction, XPos, YPos, -frame->pivotX, -frame->pivotY, frame->sprX, frame->sprY, frame->width, frame->height,
-							 entity->rotation, entity->scale, frame->sheetID, entity->alpha, entity->inkEffect, 15);
+						entity->rotation, entity->scale, frame->sheetID, entity->alpha, entity->inkEffect, FX_ALL);
             break;
 
         case ROTSTYLE_45DEG:
             if (entity->rotation >= 0x100)
                 DrawSpriteAllEffect(entity, entity->direction, XPos, YPos, -frame->pivotX, -frame->pivotY, frame->sprX, frame->sprY, frame->width, frame->height,
-							 0x200 - ((0x214 - entity->rotation) >> 6 << 6), entity->scale, frame->sheetID, entity->alpha, entity->inkEffect, 15);
+							 0x200 - ((0x214 - entity->rotation) >> 6 << 6), entity->scale, frame->sheetID, entity->alpha, entity->inkEffect, FX_ALL);
 			else
                 DrawSpriteAllEffect(entity, entity->direction, XPos, YPos, -frame->pivotX, -frame->pivotY, frame->sprX, frame->sprY, frame->width, frame->height,
-							 (entity->rotation + 20) >> 6 << 6, entity->scale, frame->sheetID, entity->alpha, entity->inkEffect, 15);
+							 (entity->rotation + 20) >> 6 << 6, entity->scale, frame->sheetID, entity->alpha, entity->inkEffect, FX_ALL);
 			break;
             break;
 
@@ -4503,7 +4512,7 @@ void DrawObjectAnimation(void *objScr, void *ent, int XPos, int YPos)
 
             frame = &animFrames[sprAnim->frameListOffset + frameID];
             DrawSpriteAllEffect(entity, entity->direction, XPos, YPos, -frame->pivotX, -frame->pivotY, frame->sprX, frame->sprY, frame->width, frame->height,
-							 rotation, entity->scale, frame->sheetID, entity->alpha, entity->inkEffect, 15);
+							 rotation, entity->scale, frame->sheetID, entity->alpha, entity->inkEffect, FX_ALL);
             // DrawSpriteRotozoom(entity->direction, XPos, YPos, -frame->pivotX, -frame->pivotY, frame->sprX, frame->sprY, frame->width,
             // frame->height,
             //                  rotation, entity->scale, frame->sheetID);
