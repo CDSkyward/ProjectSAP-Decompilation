@@ -141,7 +141,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         if (libraries.length > 0) {
             library = "lib" + libraries[libraries.length - 1] + ".so";
         } else {
-            library = "libRetroEngine.so";
+            library = "libmain.so";
         }
         return getContext().getApplicationInfo().nativeLibraryDir + "/" + library;
     }
