@@ -5,6 +5,9 @@ on:
       linux: 
         type: boolean
         description: Linux
+      linux-arm64: 
+        type: boolean
+        description: Linux (Arm64)
       windows-x64:
         type: boolean
         description: Windows (x64)
@@ -221,6 +224,35 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: SAP Ubuntu (CMake)
+          path: linux.tar.gz
+  sap-ubuntu-arm64:
+    if: ${{ github.event.inputs.linux-arm64 == 'true' }}
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install build-essential git libsdl2-dev libtheora-dev libogg-dev libvorbis-dev libglfw3-dev libglew-dev
+      - name: Build SAP Ubuntu (CMake)
+        run: |
+          cmake -B build ${{env.GENERAL_FLAGS}} ${{env.GENERAL_LINUX_FLAGS}}
+          cmake --build build --parallel
+      - name: Move artifacts
+        run: |
+          mkdir artifacts
+          mv "./build/WZ+ (CMake)" ./artifacts
+          strip "./artifacts/WZ+ (CMake)"
+          tar -czvf linux.tar.gz -C ./artifacts .
+      # tar the executables so that they don't lose exec permissions
+      # see: https://github.com/actions/upload-artifact?tab=readme-ov-file#permission-loss
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SAP Ubuntu (Arm64)
           path: linux.tar.gz
   sap-android:
     if: ${{ github.event.inputs.android == 'true' }}
